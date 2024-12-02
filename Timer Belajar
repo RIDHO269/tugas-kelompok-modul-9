@@ -1,0 +1,48 @@
+import tkinter as tk
+from tkinter import ttk, messagebox
+import time
+import threading
+
+def mulai_timer():
+    """Memulai timer belajar berdasarkan input durasi dalam menit."""
+    try:
+        # Ambil durasi dari input
+        menit = int(timer_input.get())
+        # Konversi menit ke detik
+        total_detik = menit * 60
+        # Jalankan timer dalam thread terpisah
+        threading.Thread(target=hitung_mundur, args=(total_detik,)).start()
+    except ValueError:
+        # Tampilkan pesan kesalahan jika input bukan angka
+        messagebox.showerror("Error", "Masukkan angka untuk durasi waktu!")
+
+def hitung_mundur(detik_tersisa):
+    """Melakukan hitungan mundur dan memperbarui tampilan timer."""
+    while detik_tersisa > 0:
+        # Konversi detik ke format menit:detik
+        menit, detik = divmod(detik_tersisa, 60)
+        timer_label.config(text=f"{menit:02d}:{detik:02d}")
+        time.sleep(1)  # Tunggu 1 detik
+        detik_tersisa -= 1
+    # Tampilkan notifikasi saat waktu habis
+    timer_label.config(text="00:00")
+    messagebox.showinfo("Waktu Habis", "Waktu belajar Anda selesai!")
+
+# GUI untuk Timer Belajar
+root = tk.Tk()
+root.title("Timer Belajar")
+
+# Input durasi waktu
+ttk.Label(root, text="Durasi (menit):").pack(pady=5)
+timer_input = ttk.Entry(root, width=10)
+timer_input.pack(pady=5)
+
+# Tombol untuk memulai timer
+start_button = ttk.Button(root, text="Mulai Timer", command=mulai_timer)
+start_button.pack(pady=5)
+
+# Label untuk menampilkan waktu
+timer_label = ttk.Label(root, text="00:00", font=("Arial", 24))
+timer_label.pack(pady=10)
+
+root.mainloop()
